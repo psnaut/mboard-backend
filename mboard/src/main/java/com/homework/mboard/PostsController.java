@@ -1,10 +1,13 @@
 package com.homework.mboard;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +24,16 @@ public class PostsController {
 	
 	@Autowired
 	private PostsRepository postsRepo;
+	
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public List<Posts> getAllPosts() {
+		return postsRepo.findAll();
+	}
+
+	@RequestMapping(value = "/{username}", method = RequestMethod.GET)
+	public List<Posts> getPostsByUser(@PathVariable("username") String userName) {
+		return postsRepo.findByUser(userName);
+	}
 	
 	// TODO: Add anti-XSS measures to block or sanitize unsafe posts.
 	@RequestMapping(value = "/", method = RequestMethod.POST)
