@@ -2,6 +2,9 @@ package com.homework.mboard;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -17,7 +20,9 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.homework.mboard.models.AddReply;
 import com.homework.mboard.models.Posts;
+import com.homework.mboard.models.Replies;
 import com.homework.mboard.repositories.PostsRepository;
 
 @RunWith(SpringRunner.class)
@@ -246,5 +251,266 @@ public class PostsControllerTests {
 		Mockito.verify(postsRepo, Mockito.times(0)).save(Mockito.any());
 
 	}
+	
+	@Test
+	public void verifyReplyWithNullUserNotAdded() throws Exception {
+		AddReply reply = new AddReply();
+		Replies replyContent = new Replies();
+		
+		reply.setUser("user");
+		reply.setComment("comment");
+		replyContent.setUser(null);
+		replyContent.setComment("replyComment");
+		reply.setReply(replyContent);
+		
+		Posts existingPost = new Posts();
+		existingPost.setCity("city");
+		existingPost.setComment("comment");
+		existingPost.setUser("user");
+		existingPost.setLatitude(null);
+		existingPost.setLongitude(null);
+		existingPost.setReplies(null);
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		String newReplyJson = objectMapper.writeValueAsString(reply);
+		
+		Mockito.when(postsRepo.findByUserAndComment(Mockito.any(), Mockito.any())).thenReturn(existingPost);
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/posts/reply/").accept(MediaType.APPLICATION_JSON)
+				.content(newReplyJson).contentType(MediaType.APPLICATION_JSON);
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+		MockHttpServletResponse response = result.getResponse();
+
+		assertEquals(200, response.getStatus());
+		Mockito.verify(postsRepo, Mockito.times(0)).save(Mockito.any());
+
+	}
+	
+	@Test
+	public void verifyReplyWithEmptyUserNotAdded() throws Exception {
+		AddReply reply = new AddReply();
+		Replies replyContent = new Replies();
+		
+		reply.setUser("user");
+		reply.setComment("comment");
+		replyContent.setUser(" ");
+		replyContent.setComment("replyComment");
+		reply.setReply(replyContent);
+		
+		Posts existingPost = new Posts();
+		existingPost.setCity("city");
+		existingPost.setComment("comment");
+		existingPost.setUser("user");
+		existingPost.setLatitude(null);
+		existingPost.setLongitude(null);
+		existingPost.setReplies(null);
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		String newReplyJson = objectMapper.writeValueAsString(reply);
+		
+		Mockito.when(postsRepo.findByUserAndComment(Mockito.any(), Mockito.any())).thenReturn(existingPost);
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/posts/reply/").accept(MediaType.APPLICATION_JSON)
+				.content(newReplyJson).contentType(MediaType.APPLICATION_JSON);
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+		MockHttpServletResponse response = result.getResponse();
+
+		assertEquals(200, response.getStatus());
+		Mockito.verify(postsRepo, Mockito.times(0)).save(Mockito.any());
+
+	}
+	
+	@Test
+	public void verifyReplyWithNullCommentNotAdded() throws Exception {
+		AddReply reply = new AddReply();
+		Replies replyContent = new Replies();
+		
+		reply.setUser("user");
+		reply.setComment("comment");
+		replyContent.setUser("user2");
+		replyContent.setComment(null);
+		reply.setReply(replyContent);
+		
+		Posts existingPost = new Posts();
+		existingPost.setCity("city");
+		existingPost.setComment("comment");
+		existingPost.setUser("user");
+		existingPost.setLatitude(null);
+		existingPost.setLongitude(null);
+		existingPost.setReplies(null);
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		String newReplyJson = objectMapper.writeValueAsString(reply);
+		
+		Mockito.when(postsRepo.findByUserAndComment(Mockito.any(), Mockito.any())).thenReturn(existingPost);
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/posts/reply/").accept(MediaType.APPLICATION_JSON)
+				.content(newReplyJson).contentType(MediaType.APPLICATION_JSON);
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+		MockHttpServletResponse response = result.getResponse();
+
+		assertEquals(200, response.getStatus());
+		Mockito.verify(postsRepo, Mockito.times(0)).save(Mockito.any());
+
+	}
+	
+	@Test
+	public void verifyReplyWithEmptyCommentNotAdded() throws Exception {
+		AddReply reply = new AddReply();
+		Replies replyContent = new Replies();
+		
+		reply.setUser("user");
+		reply.setComment("comment");
+		replyContent.setUser("user2");
+		replyContent.setComment("   ");
+		reply.setReply(replyContent);
+		
+		Posts existingPost = new Posts();
+		existingPost.setCity("city");
+		existingPost.setComment("comment");
+		existingPost.setUser("user");
+		existingPost.setLatitude(null);
+		existingPost.setLongitude(null);
+		existingPost.setReplies(null);
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		String newReplyJson = objectMapper.writeValueAsString(reply);
+		
+		Mockito.when(postsRepo.findByUserAndComment(Mockito.any(), Mockito.any())).thenReturn(existingPost);
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/posts/reply/").accept(MediaType.APPLICATION_JSON)
+				.content(newReplyJson).contentType(MediaType.APPLICATION_JSON);
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+		MockHttpServletResponse response = result.getResponse();
+
+		assertEquals(200, response.getStatus());
+		Mockito.verify(postsRepo, Mockito.times(0)).save(Mockito.any());
+
+	}
+	
+	@Test
+	public void verifyLegitReplyAdded() throws Exception {
+		AddReply reply = new AddReply();
+		Replies replyContent = new Replies();
+		
+		reply.setUser("user");
+		reply.setComment("comment");
+		replyContent.setUser("user2");
+		replyContent.setComment("comment2");
+		reply.setReply(replyContent);
+		
+		Posts existingPost = new Posts();
+		existingPost.setCity("city");
+		existingPost.setComment("comment");
+		existingPost.setUser("user");
+		existingPost.setLatitude(null);
+		existingPost.setLongitude(null);
+		existingPost.setReplies(null);
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		String newReplyJson = objectMapper.writeValueAsString(reply);
+		
+		Mockito.when(postsRepo.findByUserAndComment(Mockito.any(), Mockito.any())).thenReturn(existingPost);
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/posts/reply/").accept(MediaType.APPLICATION_JSON)
+				.content(newReplyJson).contentType(MediaType.APPLICATION_JSON);
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+		MockHttpServletResponse response = result.getResponse();
+
+		assertEquals(200, response.getStatus());
+		Mockito.verify(postsRepo, Mockito.times(1)).save(Mockito.any());
+
+	}
+	
+	@Test
+	public void verifyLegitReplyAppendedToExistingReply() throws Exception {
+		AddReply reply = new AddReply();
+		Replies replyContent = new Replies();
+		
+		reply.setUser("user");
+		reply.setComment("comment");
+		replyContent.setUser("user2");
+		replyContent.setComment("comment2");
+		reply.setReply(replyContent);
+		
+		List<Replies> existingReplies = new ArrayList<Replies>();
+		Replies existingReplyContent = new Replies();
+		
+		existingReplyContent.setUser("user3");
+		existingReplyContent.setComment("comment3");
+		
+		existingReplies.add(existingReplyContent);
+		
+		Posts existingPost = new Posts();
+		existingPost.setCity("city");
+		existingPost.setComment("comment");
+		existingPost.setUser("user");
+		existingPost.setLatitude(null);
+		existingPost.setLongitude(null);
+		existingPost.setReplies(existingReplies);
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		String newReplyJson = objectMapper.writeValueAsString(reply);
+		
+		Mockito.when(postsRepo.findByUserAndComment(Mockito.any(), Mockito.any())).thenReturn(existingPost);
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/posts/reply/").accept(MediaType.APPLICATION_JSON)
+				.content(newReplyJson).contentType(MediaType.APPLICATION_JSON);
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+		MockHttpServletResponse response = result.getResponse();
+
+		assertEquals(200, response.getStatus());
+		assertEquals(existingPost.getReplies().size(), 2);
+		Mockito.verify(postsRepo, Mockito.times(1)).save(Mockito.any());
+
+	}
+	
+	@Test
+	public void verifyCaseWhenPostRepliedToDoesNotExist() throws Exception {
+		AddReply reply = new AddReply();
+		Replies replyContent = new Replies();
+		
+		reply.setUser("user");
+		reply.setComment("comment");
+		replyContent.setUser("user2");
+		replyContent.setComment("comment2");
+		reply.setReply(replyContent);
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		String newReplyJson = objectMapper.writeValueAsString(reply);
+		
+		Mockito.when(postsRepo.findByUserAndComment(Mockito.any(), Mockito.any())).thenReturn(null);
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/posts/reply/").accept(MediaType.APPLICATION_JSON)
+				.content(newReplyJson).contentType(MediaType.APPLICATION_JSON);
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+		MockHttpServletResponse response = result.getResponse();
+
+		assertEquals(200, response.getStatus());
+		Mockito.verify(postsRepo, Mockito.times(0)).save(Mockito.any());
+
+	}
+
 	
 }
